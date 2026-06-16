@@ -249,6 +249,11 @@ def load_pickles():
 
 
 # ROUTES
+@app.get("/")
+def root():
+    return {"message": "API running"}
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
