@@ -4,7 +4,7 @@ A Streamlit frontend that calls a FastAPI backend to recommend movies using TMDB
 
 ## Live Demo
 
-**[Open Streamlit App](https://heart-disease-prediction-atbjfw7dnxcqwkjqjmia8p.streamlit.app/)**
+**[Open Streamlit App](https://movie-recommender-system-jvdi3gcn3vqc4yqwpl5r5d.streamlit.app/?view=home)**
 
 ## 🚀 Features
 
