@@ -1,5 +1,6 @@
 import requests
 import streamlit as st
+import time
 
 # =============================
 # CONFIG
@@ -63,15 +64,31 @@ def goto_details(tmdb_id: int):
 # =============================
 # API HELPERS
 # =============================
-@st.cache_data(ttl=30)  # short cache for autocomplete
+@st.cache_data(ttl=30)
 def api_get_json(path: str, params: dict | None = None):
-    try:
-        r = requests.get(f"{API_BASE}{path}", params=params, timeout=25)
-        if r.status_code >= 400:
-            return None, f"HTTP {r.status_code}: {r.text[:300]}"
-        return r.json(), None
-    except Exception as e:
-        return None, f"Request failed: {e}"
+    url = f"{API_BASE}{path}"
+
+    max_retries = 5
+    delay = 4  # seconds
+
+    for attempt in range(max_retries):
+        try:
+            r = requests.get(url, params=params, timeout=20)
+
+            if r.status_code >= 500:
+                # server error → likely waking up
+                raise Exception(f"Server error {r.status_code}")
+
+            if r.status_code >= 400:
+                return None, f"HTTP {r.status_code}: {r.text[:200]}"
+
+            return r.json(), None
+
+        except Exception as e:
+            if attempt < max_retries - 1:
+                time.sleep(delay)  # wait for Render to wake up
+            else:
+                return None, f"Backend not responding (cold start): {e}"
 
 
 def poster_grid(cards, cols=6, key_prefix="grid"):
